@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,10 +25,10 @@ public class FXMLController {
     private URL location;
 
     @FXML
-    private ComboBox<?> boxCategoria;
+    private ComboBox<String> boxCategoria;
 
     @FXML
-    private ComboBox<?> boxAnno;
+    private ComboBox<Integer> boxAnno;
 
     @FXML
     private Button btnAnalisi;
@@ -47,7 +49,11 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	this.txtResult.setText("");
+    	String category = this.boxCategoria.getValue();
+    	int month = this.boxAnno.getValue();
+    	this.model.creaGrafo(category, month);
+    	this.txtResult.setText(this.model.getArchiMaggioriDiPM(category, month));
     }
 
     @FXML
@@ -59,9 +65,23 @@ public class FXMLController {
         assert btnPercorso != null : "fx:id=\"btnPercorso\" was not injected: check your FXML file 'Crimes.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Crimes.fxml'.";
 
+        
     }
 
 	public void setModel(Model model) {
 		this.model = model;
+		
+		ObservableList<String> data = FXCollections.observableArrayList();
+		for (String s : this.model.getAllCategories()) {
+			data.add(s);
+		}
+		this.boxCategoria.setItems(data);
+		
+		ObservableList<Integer> mesi = FXCollections.observableArrayList();
+		for (int i=1; i<13; i++) {
+			mesi.add(i);
+		}
+		this.boxAnno.setItems(mesi);
+		
 	}
 }
